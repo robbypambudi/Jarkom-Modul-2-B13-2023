@@ -450,6 +450,376 @@ gambar 7.1
 
 Dan selesai dari kedua ping diatas mendapatkan respond dan tidak ada yang gagal artinya soal ini berhasil terjawab.
 
+# Soal 8
+
+## Deskripsi
+Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdomain melalui Werkudara dengan akses rjp.baratayuda.abimanyu.yyy.com dengan alias www.rjp.baratayuda.abimanyu.yyy.com yang mengarah ke Abimanyu.
+
+## Solusi
+Untuk menambahkan subdomain itu kita hanya tinggal merubah /etc/bind/delegasi/baratayuda.abimanyu.b13.com dan menabhakan subdomainya beserta cnamnya sehingga kurang lebih syntax yang baru akan berbentuk seperti berikut ini : 
+
+```
+@   	IN  	SOA 	abimanyu.b13.com. root.abimanyu.b13.com. (
+                    	2023101001  	; Serial
+                     	604800     	; Refresh
+                      	86400     	; Retry
+                    	2419200     	; Expire
+                     	604800 )   	; Negative Cache TTL
+;
+@   	IN  	NS  	baratayuda.abimanyu.b13.com.
+@   	IN  	A   	10.13.4.4   	; IP Abimanyu
+www 	IN  	CNAME   baratayuda.abimanyu.b13.com.
+rjp 	IN  	A   	10.13.4.4   	; IP Abimanyu
+www.rjp IN  	CNAME   rjp.baratayuda.abimanyu.b13.com.
+```
+dan kita lakukan testing dengan cara ping rjp.baratayuda.abimanyu.b13.com dan juga www.rjp sehingga mendapatkan hasil sebagai berikut : 
+
+Gambar 8.1
+
+# Soal 9
+
+## Deskripsi
+Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai web server) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
+
+## Solusi
+Step pertama lakukan instalasi nginx pada ke-4 node tersebut dengan cara : 
+```
+apt-get update
+apt-get install nginx -y
+service nginx start
+```
+Kemudian kita juga harus melakukan instalasi lynx untuk melakukan check apakah deployment sudah berhasil atau belum, dengan cara
+```
+apt-get install lynx
+```
+Kita bisa check apakah deployment sudah berhasil atau belum dengan cara 
+```
+lynx localhost
+```
+Dan mendapatkan hasil sebagai berikut untuk ke tiga node tersebut
+
+
+Gambar 9.1
+
+yang artinya proses deployment web server sudah berhasil dilakukan.
+
+
+
+
+
+
+# Soal 10
+
+## Deskripsi
+
+Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh
+	- Prabakusuma:8001
+	- Abimanyu:8002
+	- Wisanggeni:8003
+
+## Solusi
+
+Untuk melakukan setting nginx menggunakan algoritma Round Robin pertama kita bisa akses ke Server Arjuna kemudian masuk /etc/nginx/sites-available dan membuat sebuah file yang bernama arjuna.b13.com yang berisikan syntax berikut : 
+file : /etc/nginx/sites-available
+
+```
+# Default menggunakan Round Robin
+upstream arjuna  {
+    	server 10.13.4.3:8001 ; #IP Prabukusuma
+    	server 10.13.4.4:8002 ; #IP Abimanyu
+    	server 10.13.4.5:8003 ; #IP Wissanggeni
+}
+
+ server {
+    	listen 80;
+    	server_name arjuna.b13.com;
+
+    	location / {
+            	proxy_pass http://arjuna;
+    	}
+}
+```
+Kemudian buat sebuah symlink ke : 
+
+```
+ ln -s /etc/nginx/sites-available/arjuna.b13.com /etc/nginx/sites-enabled
+```
+Selanjutnya kita akan check apakah configuration kita sudah benar atau belum dengan cara tulis nginx -t dan hasil nya sebagai berikut : 
+```
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+Selanjutnya kita akan restart nginx dan setup 3 Server dibawahnya yaitu Prabukusuma, Abimanyu, dan Wissanggeni sebelum itu kita install dulu tool seperti php dan php-fpm untuk menjalankan php dengan cara :
+
+```
+apt-get install php php-fpm -y
+service php7.0-fpm start
+```
+agar nginx bisa berjalan pada port yang sudah ditentukan, untuk melakukan hal tersebut kita bisa buka 3 server diatas dan membuat sebuah file nginx sebagai berikut : 
+```
+server {
+    	listen 8001;
+    	root /var/www/arjuna.b13.com;
+    	index index.php index.html index.htm;
+    	server_name arjuna.b13.com;
+    	location / {
+            	try_files $uri /index.php?$query_string;
+    	}
+    	location ~ \.php$ {
+            	include snippets/fastcgi-php.conf;
+            	fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+    	}
+    	location ~ /\.ht {
+            	deny all;
+    	}
+    	error_log /var/log/nginx/arjuna.b13.error.log;
+    	access_log /var/log/nginx/arjuna.b13.access.log;
+}
+```
+kemudian disesuaikan listen sesuai dengan port pada soal, selanjutnya restart nginx dan check apakah sudah berhasil atau belum dengan lynx localhost dan mendapatkan hasil seperti berikut :
+
+gambar 10.1
+
+gambar 10.2
+
+gambar 10.3
+
+
+# Soal 11
+
+## Deskripsi
+Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
+
+## Solusi
+Untuk melakukan hal tersebut pertama kita harus install dulu pada worker Abimanyu sebuah apache dengan cara 
+```
+apt-get install apache2
+```
+Selanjutnya kita download unzip dan wget untuk download resources yang sudah disediakan dan kemudian kita bikin sebuah folder di /var/www/abimanyu.b13 dan pindah hasil download ke folder tersebut.
+
+Setelah selesai kita perlu setting documentroot pada webserver ini untuk mengarah ke /var/www/abimanyu.b13 pertama-tama masuk ke directory cd /etc/apache2/sites-available dan edit file 000-default.conf dan tambahkan script berikut 
+```
+ServerName www.abimanyu.b13.com
+DocumentRoot /var/www/abimanyu.b13
+```
+Setelah selesai kita coba restart apache2 nya dan kita coba testing dengan cara lynx arjuna.b13.com/home.html di server abimanyu tersebut
+
+Gambar 11.1
+
+
+# Soal 12
+
+## Deskripsi
+Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
+
+## Solusi
+Untuk merubah tersebut tambahkan syntax berikut pada /etc/apache2/sites-available/arjuna.b13.com.conf
+```
+<Directory /var/www/abimanyu.b13>
+      Options +Indexes
+</Directory>
+
+Alias "/home" "/var/www/abimanyu.b13/index.php/home"
+```
+Setelah itu restart server apache2 dan lakukan ujicoba pada server sadewa, dan tampil hasil sebagai berikut :
+
+Gambar 12.1
+
+# Soal 13
+
+## Deskripsi
+Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
+## Solusi
+Pertama download resource yang diperlukan, kemudian tambahan sebuah syntax berikut pada /etc/apache2/sites-available
+```
+<VirtualHost *:80>
+   
+    	ServerName parikesit.abimanyu.b13.com
+
+    	ServerAdmin webmaster@localhost
+    	DocumentRoot /var/www/parikesit.abimanyu.b13.com
+    	ServerAlias www.parikesit.abimanyu.b13.com
+
+    	ErrorLog ${APACHE_LOG_DIR}/error.log
+    	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+</VirtualHost>
+```
+# Soal 13
+
+## Deskripsi
+Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
+
+## Solusi
+Untuk membuat folder public yang bisa di listing directory dan folder secret yang forbidden kita menambahkan sebuah syntex di script sebelumnya yaitu 
+```
+<VirtualHost *:80>
+    	ServerName parikesit.abimanyu.b13.com
+
+    	ServerAdmin webmaster@localhost
+    	DocumentRoot /var/www/parikesit.abimanyu.b13.com
+    	ServerAlias www.parikesit.abimanyu.b13.com
+
+    	# Soal No 14
+    	<Directory /var/www/abimanyu.b13.com/public>
+            	Options +Indexes
+    	</Directory>
+
+    	<Directory /var/www/parikesit.abimanyu.b13.com/secret>
+            	Options -Indexes
+    	</Directory>
+
+    	ErrorLog ${APACHE_LOG_DIR}/parikesit_error.log
+    	CustomLog ${APACHE_LOG_DIR}/parikesit_access.log combined
+
+</VirtualHost>
+```
+Gambar 14.1
+
+# Soal 15
+
+## Deskripsi
+Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
+
+## Solusi
+Untuk melakukan kustomisasi error tersebut yang perlu dilakukan adalah menambahkan syntax berikut pada 
+```
+ErrorDocument 404 /error/404.html
+ErrorDocument 403 /error/403.html
+```
+Sehingga  apabila kita uji coba maka akan menghasilkan sebagai berikut :
+
+Gambar 15.1
+
+Gambar 15.2
+
+# Soal 16
+
+## Deskripsi
+Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi
+www.parikesit.abimanyu.yyy.com/js
+
+## Solusi
+Untuk menyelesaikan tersebut kita membuat sebuah alias untuk menyingkat public/js menjadi js dengan cara tambahkan script berikut :
+```
+Alias "/js" "/var/www/parikesit.abimanyu.b13.com/public/js"
+
+```
+Kemudian kita lakukan test dengan cara lynx parikesit.abimanyu.b13.com/js maka akan mendapatkan hasil sebabgai berikut:
+
+Gambar 16.1
+
+# Soal 17
+
+## Deskripsi
+Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
+
+## Solusi
+Pastikan semua resource sudah terdownload dan pindah ke /var/www/rjp.baratayuda.abimanyu.b13.com
+```
+<VirtualHost *:14000 *:14400 >
+    	ServerName rjp.baratayuda.abimanyu.b13.com
+
+    	ServerAdmin webmaster@localhost
+    	DocumentRoot /var/www/rjp.baratayuda.abimanyu.b13.com
+	ServerAlias www.rjp.baratayuda.abimanyu.b13.com
+
+    	ErrorLog ${APACHE_LOG_DIR}/parikesit_error.log
+    	CustomLog ${APACHE_LOG_DIR}/parikesit_access.log combined
+
+</VirtualHost>
+```
+Kemudian tambahkan listen 14000 dan 14400 pada /etc/apache2/ports.conf
+```
+Listen 14000
+Listen 14400
+```
+Selanjutnya restart apache dan check apakah server abimanyu sudah membuka port 14400 dan 14000 dengan cara netsat -nltp | grep apache
+
+Gambar 17.1
+
+Kemudian kita check di client apakah sudah bisa diakses atau belum:
+
+Gambar 17.2
+
+Gambar 17.3
+
+
+# Soal 18
+
+## Deskripsi
+Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
+
+## Solusi
+Pertama kita install tool berikut ini : 
+```
+sudo apt-get update
+sudo apt-get install apache2 apache2-utils
+```
+Setelah itu kita bisa membuat password dengan cara 
+```
+sudo htpasswd -c /etc/apache2/.htpasswd Wayang
+
+```
+Kemudian masukan password yaitu baratayudab13
+Kemudian kita tambahkan script di sites-available/rjp.baratayuda dengan 
+
+Gambar 18.1
+
+kemudian diisikan passwordnya dan usernamenya yaitu : Wayang dan baratayudab13 maka akan keluar tampilan seperti berikut: 
+
+Gambar 18.2
+
+# Soal 19
+
+## Deskripsi
+Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
+
+## Solusi
+Untuk menyelesaikan problem diatas sebenernya kita tinggal ubah httaccess untuk memforward ke domain tersebut, tapi sebelum itu kita pastikan dulu a2enmod rewrite sudah menyalah dengan cara menjalankan 
+```
+a2enmod rewrite
+
+```
+Setelah itu kita setting .htaccess menjadi sebagai berikut sebagai berikut : 
+```
+RewriteEngine On
+RewriteBase /
+RewriteCond %{HTTP_HOST} ^10\.13\.4\.4$
+RewriteRule ^(.*) http://www.abimanyu.b13.com/$1 [L,R=301]
+```
+
+# Soal 20
+
+## Deskripsi
+Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
+
+## Solusi
+Pertama tama pasang .htaccess pada /var/www/parikesit.abimanyu.b13.com kemudian tambahakan syntax dibawah ini 
+```
+RewriteEngine On
+RewriteBase /
+
+# Redirect requests for images containing "abimanyu" to abimanyu.png
+RewriteCond %{REQUEST_URI} abimanyu [NC]
+RewriteRule \.(jpg|jpeg|png|gif)$ http://www.parikesit.abimanyu.b13.com/abimanyu.png [L,R=301]
+```
+Kemudian Tambahkan alias dengan cara ubah parikesit.abimanyu.b13.com.conf  menjadi 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

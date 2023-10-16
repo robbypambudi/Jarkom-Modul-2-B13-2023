@@ -144,6 +144,8 @@ service nginx start
 
 Selesai configuration node sudah selesai dan siap untuk digunakan. kita bisa check keterhubungan dari node tersebut dengan cara melakukan ping ke masing-masing node dan mendapatkan hasil sebagai berikut :
 
+https://github.com/robbypambudi/Jarkom-Modul-2-B13-2023/assets/34505233/3b5413d5-e51d-4dd0-af39-06f09aae5fe9
+
 # Soal No 2
 
 ## Deskripsi

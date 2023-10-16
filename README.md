@@ -70,7 +70,7 @@ Sesuai nama pada topologi menjadi seperti berikut :
 
 ![img1](Image/1.3.png)
 
-Kemudian Sesuaikan masing-masing IP pada node dengan prefix ip adalah `10.13.xxx.xxx`
+Kemudian Sesuaikan masing-masing IP pada node dengan prefix ip adalah `10.15.xxx.xxx`
 dengan cara setting configuration pada router dengan script sebagai berikut :
 
 ![img1](Image/1.4.png)
@@ -89,9 +89,9 @@ Kemudian setting node `Werkudara (eth2 -> eth0)`
 
 Kemudian kita setting bagian pada **eth3** dan kita bagi ip antara sadewa dan nakula menjadi berikut :
 
-**Sadewa** : `10.13.3.2`
+**Sadewa** : `10.15.3.2`
 
-**Nakula** : `10.13.3.3`
+**Nakula** : `10.15.3.3`
 
 Selanjutnya kita buat configuration jaringan nya menjadi berikut :
 
@@ -99,13 +99,13 @@ Selanjutnya kita buat configuration jaringan nya menjadi berikut :
 
 Kemudian kita setting bagian pada **eth4** dan kita bagi ip antara Arjuna-LB, Prabukusuma, Abimanyu, dan Wissanggeni menjadi berikut :
 
-**Arjuna-LB** : `10.13.4.2`
+**Arjuna-LB** : `10.15.4.2`
 
-**Prabukusuma** : `10.13.4.3`
+**Prabukusuma** : `10.15.4.3`
 
-**Abimanyu** : `10.13.4.4`
+**Abimanyu** : `10.15.4.4`
 
-**Wissanggeni** : `10.13.4.5`
+**Wissanggeni** : `10.15.4.5`
 
 Selanjutnya buat configuration jaringan nya menjadi berikut :
 
@@ -115,7 +115,7 @@ Selanjutnya buat configuration jaringan nya menjadi berikut :
 Kemudian setting iptable agar seluruh node di bawah router bisa terkoneksi ke internet dengan cara tulis syntax berikut pada Node **Yudhistira** :
 
 ```
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.13.0.0/16
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.15.0.0/16
 ```
 
 Dan semua node pada project tersebut sudah terhubung dan terkoneksi dengan internet.
@@ -143,8 +143,6 @@ service nginx start
 ## Hasil
 
 Selesai configuration node sudah selesai dan siap untuk digunakan. kita bisa check keterhubungan dari node tersebut dengan cara melakukan ping ke masing-masing node dan mendapatkan hasil sebagai berikut :
-
-<video src="video/soal1.mov" controls preload></video>
 
 # Soal No 2
 
@@ -175,7 +173,7 @@ $TTL	604800
                      	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	arjuna.b13.com.
-@   	IN  	A   	10.13.4.2   	; IP Arjuna
+@   	IN  	A   	10.15.4.2   	; IP Arjuna
 @   	IN  	AAAA	::1
 ```
 
@@ -193,7 +191,7 @@ zone "arjuna.b13.com" {
 Kemudian kita ganti salah satu nameserver pada node **Sadewa** untuk melakukan testing DNS tersebut.
 
 ```
-nameserver 10.13.1.2
+nameserver 10.15.1.2
 ```
 
 dan lakukan test pada DNS tersebut dengan cara ping **arjuna.b13.com** dan didapatkan hasil sebagai berikut :
@@ -217,7 +215,7 @@ $TTL	604800
                      	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	arjuna.b13.com.
-@   	IN  	A   	10.13.4.2   	; IP Arjuna
+@   	IN  	A   	10.15.4.2   	; IP Arjuna
 www   IN   CNAME arjuna.b13.com.
 @   	IN  	AAAA	::1
 ```
@@ -255,7 +253,7 @@ $TTL	604800
                      	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	abimanyu.b13.com.
-@   	IN  	A   	10.13.4.4   	; IP Abimanyu
+@   	IN  	A   	10.15.4.4   	; IP Abimanyu
 www   IN   CNAME abimanyu.b13.com.
 @   	IN  	AAAA	::1
 ```
@@ -304,9 +302,9 @@ $TTL	604800
                      	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	abimanyu.b13.com.
-@   	IN  	A   	10.13.4.4   	; IP Abimanyu
+@   	IN  	A   	10.15.4.4   	; IP Abimanyu
 www 	IN  	CNAME   abimanyu.b13.com.
-parikesit IN	A   	10.13.4.4   	; IP Abimanyu
+parikesit IN	A   	10.15.4.4   	; IP Abimanyu
 @   	IN  	AAAA	::1
 ```
 
@@ -363,15 +361,15 @@ Untuk menambahkan DNS Slave pada server **Werkudara** kita perlu mengatur node p
 zone "arjuna.b13.com" {
     	type master;
     	notify yes;
-    	also-notify { 10.13.2.2; } // IP Werkudara
-    	allow-transfer { 10.13.2.2; } // IP Werkudara
+    	also-notify { 10.15.2.2; } // IP Werkudara
+    	allow-transfer { 10.15.2.2; } // IP Werkudara
     	file "/etc/bind/arjuna.b13/arjuna.b13.com";
 };
 
 zone "abimanyu.b13.com" {
     	type master;
-    	also-notify { 10.13.2.2; } // IP Werkudara
-    	alow-transfer { 10.13.2.2; } // IP Werkudara
+    	also-notify { 10.15.2.2; } // IP Werkudara
+    	alow-transfer { 10.15.2.2; } // IP Werkudara
     	file "/etc/bind/abimanyu.b13/abimanyu.b13.com";
 };
 
@@ -386,13 +384,13 @@ Save dan restart bind9, kemudian setting node **Werkudara** pada file `/etc/bind
 ```
 zone "arjuna.b13.com" {
     	type slave;
-    	masters { 10.13.1.2; }; // IP Yudhistira
+    	masters { 10.15.1.2; }; // IP Yudhistira
     	file "/var/lib/arjuna.b13.com";
 };
 
 zone "abimanyu.b13.com" {
     	type slave;
-    	masters { 10.13.1.2; }; // IP Yudhistira
+    	masters { 10.15.1.2; }; // IP Yudhistira
     	file "/var/lib/abimanyu.b13.com";
 };
 ```
@@ -402,8 +400,8 @@ Kemudian restart bind9 pada node **Werkudara**, dan kita lakukan percobaan pada 
 File : `/etc/resolv.conf`
 
 ```
-nameserver 10.13.2.2
-nameserver 10.13.1.2
+nameserver 10.15.2.2
+nameserver 10.15.1.2
 ```
 
 ## Hasil
@@ -437,10 +435,10 @@ $TTL     604800
                      	604800 )   	; Negative Cache TTL
 ;
 @           	IN  	NS  	abimanyu.b13.com.
-@           	IN  	A   	10.13.4.4   	; IP Abimanyu
+@           	IN  	A   	10.15.4.4   	; IP Abimanyu
 www         	IN  	CNAME   abimanyu.b13.com.
-parikesit   	IN  	A   	10.13.4.4   	; IP Abimanyu
-ns1         	IN  	A   	10.13.2.2   	; IP Werkudara
+parikesit   	IN  	A   	10.15.4.4   	; IP Abimanyu
+ns1         	IN  	A   	10.15.2.2   	; IP Werkudara
 baratayuda  	IN  	NS  	ns1
 @   	IN  	AAAA	::1
 ```
@@ -456,13 +454,13 @@ Langkah selanjutnya adalah restart server dan atur kembali configuration pada No
 ```
 zone "arjuna.b13.com" {
     	type slave;
-    	masters { 10.13.1.2; }; // IP Yudhistira
+    	masters { 10.15.1.2; }; // IP Yudhistira
     	file "/var/lib/arjuna.b13.com";
 };
 
 zone "abimanyu.b13.com" {
     	type slave;
-    	masters { 10.13.1.2; }; // IP Yudhistira
+    	masters { 10.15.1.2; }; // IP Yudhistira
     	file "/var/lib/abimanyu.b13.com";
 };
 
@@ -488,7 +486,7 @@ $TTL	604800
                      	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	baratayuda.abimanyu.b13.com.
-@   	IN  	A   	10.13.4.4   	; IP Abimanyu
+@   	IN  	A   	10.15.4.4   	; IP Abimanyu
 www 	IN  	CNAME   baratayuda.abimanyu.b13.com.
 ```
 
@@ -517,9 +515,9 @@ Untuk menambahkan subdomain itu kita hanya tinggal merubah /etc/bind/delegasi/ba
                      	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	baratayuda.abimanyu.b13.com.
-@   	IN  	A   	10.13.4.4   	; IP Abimanyu
+@   	IN  	A   	10.15.4.4   	; IP Abimanyu
 www 	IN  	CNAME   baratayuda.abimanyu.b13.com.
-rjp 	IN  	A   	10.13.4.4   	; IP Abimanyu
+rjp 	IN  	A   	10.15.4.4   	; IP Abimanyu
 www.rjp IN  	CNAME   rjp.baratayuda.abimanyu.b13.com.
 ```
 
@@ -575,9 +573,9 @@ file : /etc/nginx/sites-available
 ```
 # Default menggunakan Round Robin
 upstream arjuna  {
-    	server 10.13.4.3:8001 ; #IP Prabukusuma
-    	server 10.13.4.4:8002 ; #IP Abimanyu
-    	server 10.13.4.5:8003 ; #IP Wissanggeni
+    	server 10.15.4.3:8001 ; #IP Prabukusuma
+    	server 10.15.4.4:8002 ; #IP Abimanyu
+    	server 10.15.4.5:8003 ; #IP Wissanggeni
 }
 
  server {

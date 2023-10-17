@@ -73,6 +73,8 @@ Sesuai nama pada topologi menjadi seperti berikut :
 Kemudian Sesuaikan masing-masing IP pada node dengan prefix ip adalah `10.15.xxx.xxx`
 dengan cara setting configuration pada router dengan script sebagai berikut :
 
+<!-- Create Table -->
+
 ![img1](Image/1.4.png)
 
 Kemudian jika berhasil maka sebagai berikut
@@ -89,9 +91,10 @@ Kemudian setting node `Werkudara (eth2 -> eth0)`
 
 Kemudian kita setting bagian pada **eth3** dan kita bagi ip antara sadewa dan nakula menjadi berikut :
 
-**Sadewa** : `10.15.3.2`
-
-**Nakula** : `10.15.3.3`
+```
+Sadewa : 10.15.3.2
+Nakula : 10.15.3.3
+```
 
 Selanjutnya kita buat configuration jaringan nya menjadi berikut :
 
@@ -99,13 +102,12 @@ Selanjutnya kita buat configuration jaringan nya menjadi berikut :
 
 Kemudian kita setting bagian pada **eth4** dan kita bagi ip antara Arjuna-LB, Prabukusuma, Abimanyu, dan Wissanggeni menjadi berikut :
 
-**Arjuna-LB** : `10.15.4.2`
-
-**Prabukusuma** : `10.15.4.3`
-
-**Abimanyu** : `10.15.4.4`
-
-**Wissanggeni** : `10.15.4.5`
+```
+Arjuna-LB 	: 10.15.4.2
+Prabukusuma : 10.15.4.3
+Abimanyu 	: 10.15.4.4
+Wissanggeni : 10.15.4.5
+```
 
 Selanjutnya buat configuration jaringan nya menjadi berikut :
 
@@ -156,11 +158,11 @@ Buatlah website utama dengan akses ke **arjuna.yyy.com** dengan alias **www\.arj
 
 Untuk membuat DNS tersebut pertama-tama kita aktifkan dulu seluruh node dan kita langsung ke console dari node **Yudhistira** sebagai DNS Master pada jaringan ini.
 
-gambar 2.1
+![img1](Image/2.1.png)
 
 Setelah `/etc/bind` sudah terbuka di node Yudhistira, langkah selanjutnya membuat sebuah folder yaitu **arjuna.b13** dan kemudian membuat sebuah konfigurasi sebagai berikut :
 
-File : `/etc/bind/arjuna.b13`
+File : `/etc/bind/arjuna.b13.com`
 
 ```
 ;
@@ -168,11 +170,11 @@ File : `/etc/bind/arjuna.b13`
 ;
 $TTL	604800
 @   	IN  	SOA 	b13.com. root.b13.com. (
-                    	2023091001  	; Serial
-                     	604800     	; Refresh
-                      	86400     	; Retry
-                    	2419200     	; Expire
-                     	604800 )   	; Negative Cache TTL
+	2023091001  	; Serial
+	604800     		; Refresh
+	86400     		; Retry
+	2419200     	; Expire
+	604800 )   		; Negative Cache TTL
 ;
 @   	IN  	NS  	arjuna.b13.com.
 @   	IN  	A   	10.15.4.2   	; IP Arjuna
@@ -198,11 +200,11 @@ nameserver 10.15.1.2
 
 dan lakukan test pada DNS tersebut dengan cara ping **arjuna.b13.com** dan didapatkan hasil sebagai berikut :
 
-gambar 2.2
+![img1](Image/2.2.png)
 
-Untuk menambahkan alias www.arjuna.b13.com maka kita harus menambahkan alias pada `/etc/bind/arjuna.b13/arjuna.b13.com` sebagai berikut :
+Untuk menambahkan alias www.arjuna.b13.com maka kita harus menambahkan alias pada `/etc/bind/arjuna.b13/arjuna.b13` sebagai berikut :
 
-File : `/etc/bind/arjuna.b13/arjuna.b13.com`
+File : `/etc/bind/arjuna.b13/arjuna.b13`
 
 ```
 ;
@@ -210,11 +212,11 @@ File : `/etc/bind/arjuna.b13/arjuna.b13.com`
 ;
 $TTL	604800
 @   	IN  	SOA 	b13.com. root.b13.com. (
-                    	2023091001  	; Serial
-                     	604800     	; Refresh
-                      	86400     	; Retry
-                    	2419200     	; Expire
-                     	604800 )   	; Negative Cache TTL
+	2023091001  ; Serial
+	604800     	; Refresh
+	86400     	; Retry
+	2419200     ; Expire
+	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	arjuna.b13.com.
 @   	IN  	A   	10.15.4.2   	; IP Arjuna
@@ -226,7 +228,7 @@ www   IN   CNAME arjuna.b13.com.
 
 Sehingga apabila kita ping yang kedua kalinya akan menampilkan hasil sebagai berikut :
 
-gambar 2.3
+![img1](Image/2.3.png)
 
 Yang artinya konfigurasi DNS kita sudah berhasil dan siap untuk digunakan.
 
@@ -279,7 +281,7 @@ zone "abimanyu.b13.com" {
 
 Apabila kita coba ping lagi maka akan menampilkan respond seperti berikut :
 
-gambar 3.1
+![img1](Image/3.1.png)
 
 # Soal No 4
 
@@ -297,11 +299,11 @@ Untuk membuat sebuah subdomain maka yang perlu kita butuhkan adalah menambahkan 
 ;
 $TTL	604800
 @   	IN  	SOA 	b13.com. root.b13.com. (
-                    	2023091001  	; Serial
-                     	604800     	; Refresh
-                      	86400     	; Retry
-                    	2419200     	; Expire
-                     	604800 )   	; Negative Cache TTL
+	2023091001  ; Serial
+	604800     	; Refresh
+	86400     	; Retry
+	2419200     ; Expire
+	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	abimanyu.b13.com.
 @   	IN  	A   	10.15.4.4   	; IP Abimanyu
@@ -314,9 +316,9 @@ parikesit IN	A   	10.15.4.4   	; IP Abimanyu
 
 Yang apabilah kita test dengan melakukan ping ke parikesit.abimanyu.b13.com yang hasilnya sebagai berikut :
 
-Gambar 4.1
+![img1](Image/4.1.png)
 
-Bisa kita lihat ping diatas menghasilkan sebuah respond ip ..4.4 yaitu IP node Abimanyu, yang artinya sambungan tersebut sudah berhasil.
+Bisa kita lihat ping diatas menghasilkan sebuah respond ip 10.15.4.4 yaitu IP node Abimanyu, yang artinya sambungan tersebut sudah berhasil.
 
 # Soal No 5
 
@@ -326,24 +328,21 @@ Buat juga reverse domain untuk domain utama.
 
 ## Solusi
 
-Untuk membuat reverse domain tersebut kita bisa pergi ke file `/etc/bind/named.conf` dan menambahkan script sebagai berikut :
+Untuk membuat reverse domain tersebut kita bisa pergi ke file `/etc/bind/named.conf.local` dan menambahkan script sebagai berikut :
 
 ```
 zone "4.13.10.in-addr.arpa" {
-    	type master;
-    	file "/etc/bind/4.13.10.in-addr/4.13.10.in-addr.arpa";
+	type master;
+	file "/etc/bind/4.13.10.in-addr/4.13.10.in-addr.arpa";
 };
 ```
 
 Save dan kita buat sebuah file sebagai tempat penampungan reverse domain dengan nama folder `4.13.10.in-addr` tambahkan pada file sesuai dengan file diatas yaitu :
 
-gambar 5.1
+![img1](Image/5.1.png)
 
-Kemudian kita bisa restart dan check apakah konfigurasi diatas sudah benar dengan cara tulis command di bawah ini pada node **Sadewa**:
-
-gambar 5.2
-
-gambar 5.3
+Kemudian kita bisa restart dan check apakah konfigurasi diatas sudah benar dengan cara tulis command di bawah ini pada node **Sadewa**
+![img1](Image/5.2.png)
 
 ## Hasil
 
@@ -375,9 +374,9 @@ zone "abimanyu.b13.com" {
     	file "/etc/bind/abimanyu.b13/abimanyu.b13.com";
 };
 
-zone "4.13.10.in-addr.arpa" {
+zone "4.15.10.in-addr.arpa" {
     	type master;
-    	file "/etc/bind/4.13.10.in-addr/4.13.10.in-addr.arpa";
+    	file "/etc/bind/4.15.10.in-addr/4.15.10.in-addr.arpa";
 };
 ```
 
@@ -410,7 +409,7 @@ nameserver 10.15.1.2
 
 Setelah itu matikan bind dari server Yudhistira dan lakukan percobaan pada node Sadewa dengan cara ping arjuna.b13.com dan menampilkan hasil sebagai berikut:
 
-Gambar 6.1
+![img1](Image/6.1.png)
 
 Dari hasil diatas kita bisa simpulkan bahwa dns slave sudah bekerja dengan baik.
 
@@ -430,11 +429,11 @@ Untuk membuat subdomain tersebut kita bisa pergi ke server Yudhistira dan pergi 
 ;
 $TTL     604800
 @   	IN  	SOA 	b13.com. root.b13.com. (
-                    	2023091001  	; Serial
-                     	604800     	; Refresh
-                      86400     	      ; Retry
-                    	2419200     	; Expire
-                     	604800 )   	; Negative Cache TTL
+	2023091001  	; Serial
+	604800     		; Refresh
+	86400     	    ; Retry
+	2419200     	; Expire
+	604800 )   		; Negative Cache TTL
 ;
 @           	IN  	NS  	abimanyu.b13.com.
 @           	IN  	A   	10.15.4.4   	; IP Abimanyu
@@ -481,11 +480,11 @@ Setelah itu kita bisa bikin sebuah folder pada **/etc/bind/** dengan nama folder
 ;
 $TTL	604800
 @   	IN  	SOA 	abimanyu.b13.com. root.abimanyu.b13.com. (
-                    	2023101001  	; Serial
-                     	604800     	; Refresh
-                      	86400     	; Retry
-                    	2419200     	; Expire
-                     	604800 )   	; Negative Cache TTL
+	2023101001  	; Serial
+	604800     		; Refresh
+	86400     		; Retry
+	2419200     	; Expire
+	604800 )   		; Negative Cache TTL
 ;
 @   	IN  	NS  	baratayuda.abimanyu.b13.com.
 @   	IN  	A   	10.15.4.4   	; IP Abimanyu
@@ -494,7 +493,7 @@ www 	IN  	CNAME   baratayuda.abimanyu.b13.com.
 
 Setelah itu kita bisa lakukan uji coba dengan melakukan ping pada domain tersebut dari Node Sadewa dan mendapatkan hasil sebagai berikut :
 
-gambar 7.1
+![img1](Image/7.1.png)
 
 Dan selesai dari kedua ping diatas mendapatkan respond dan tidak ada yang gagal artinya soal ini berhasil terjawab.
 
@@ -506,15 +505,15 @@ Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdom
 
 ## Solusi
 
-Untuk menambahkan subdomain itu kita hanya tinggal merubah /etc/bind/delegasi/baratayuda.abimanyu.b13.com dan menabhakan subdomainya beserta cnamnya sehingga kurang lebih syntax yang baru akan berbentuk seperti berikut ini :
+Untuk menambahkan subdomain itu kita hanya tinggal merubah `/etc/bind/delegasi/baratayuda.abimanyu.b13.com` dan menabhakan subdomainya beserta cnamnya sehingga kurang lebih syntax yang baru akan berbentuk seperti berikut ini :
 
 ```
 @   	IN  	SOA 	abimanyu.b13.com. root.abimanyu.b13.com. (
-                    	2023101001  	; Serial
-                     	604800     	; Refresh
-                      	86400     	; Retry
-                    	2419200     	; Expire
-                     	604800 )   	; Negative Cache TTL
+	2023101001  	; Serial
+	604800     	; Refresh
+	86400     	; Retry
+	2419200     	; Expire
+	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	baratayuda.abimanyu.b13.com.
 @   	IN  	A   	10.15.4.4   	; IP Abimanyu
@@ -525,7 +524,7 @@ www.rjp IN  	CNAME   rjp.baratayuda.abimanyu.b13.com.
 
 dan kita lakukan testing dengan cara ping rjp.baratayuda.abimanyu.b13.com dan juga www.rjp sehingga mendapatkan hasil sebagai berikut :
 
-Gambar 8.1
+![img1](Image/8.1.png)
 
 # Soal 9
 

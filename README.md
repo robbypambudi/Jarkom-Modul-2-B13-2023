@@ -795,7 +795,7 @@ Alias "/js" "/var/www/parikesit.abimanyu.b13.com/public/js"
 
 Kemudian kita lakukan test dengan cara lynx parikesit.abimanyu.b13.com/js maka akan mendapatkan hasil sebabgai berikut:
 
-Gambar 16.1
+![img1](Image/16.1.png)
 
 # Soal 17
 
@@ -830,13 +830,11 @@ Listen 14400
 
 Selanjutnya restart apache dan check apakah server abimanyu sudah membuka port 14400 dan 14000 dengan cara netsat -nltp | grep apache
 
-Gambar 17.1
+![img1](Image/17.1.png)
 
 Kemudian kita check di client apakah sudah bisa diakses atau belum:
 
-Gambar 17.2
-
-Gambar 17.3
+![img1](Image/17.2.png)
 
 # Soal 18
 
@@ -863,11 +861,11 @@ sudo htpasswd -c /etc/apache2/.htpasswd Wayang
 Kemudian masukan password yaitu baratayudab13
 Kemudian kita tambahkan script di sites-available/rjp.baratayuda dengan
 
-Gambar 18.1
+![img1](Image/18.1.png)
 
 kemudian diisikan passwordnya dan usernamenya yaitu : Wayang dan baratayudab13 maka akan keluar tampilan seperti berikut:
 
-Gambar 18.2
+![img1](Image/18.2.png)
 
 # Soal 19
 
@@ -913,3 +911,44 @@ RewriteRule \.(jpg|jpeg|png|gif)$ http://www.parikesit.abimanyu.b13.com/abimanyu
 ```
 
 Kemudian Tambahkan alias dengan cara ubah parikesit.abimanyu.b13.com.conf menjadi
+
+```
+<VirtualHost *:80>
+	ServerName parikesit.abimanyu.b13.com
+
+	ErrorDocument 404 /error/404.html
+	ErrorDocument 403 /error/403.html
+
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/parikesit.abimanyu.b13.com
+	ServerAlias www.parikesit.abimanyu.b13.com
+
+	# Soal No 14
+	<Directory /var/www/abimanyu.b13.com/public>
+			Options +Indexes
+	</Directory>
+
+	<Directory /var/www/parikesit.abimanyu.b13.com/secret>
+			Options -Indexes
+	</Directory>
+
+	# SOal No 16
+	Alias "/js" "/var/www/parikesit.abimanyu.b13.com/public/js"
+
+	# Soal No 20
+	<Directory /var/www/parikesit.abimanyu.b13.com>
+			Options +FollowSymLinks -Multiviews
+			AllowOverride All
+	</Directory>
+	Alias "/abimanyu.png" "/var/www/parikesit.abimanyu.b13.com/public/images/abimanyu.png"
+
+	ErrorLog ${APACHE_LOG_DIR}/parikesit_error.log
+	CustomLog ${APACHE_LOG_DIR}/parikesit_access.log combined
+</VirtualHost>
+```
+
+Selanjutnya kita check dengan menggunakan curl -I {url}/images/abimanyu
+
+![img1](Image/20.1.png)
+
+Yey selesai urlnya sudah diarahkan ke abimanyu.png

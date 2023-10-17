@@ -554,17 +554,17 @@ Kita bisa check apakah deployment sudah berhasil atau belum dengan cara
 lynx localhost
 ```
 
-Dan mendapatkan hasil sebagai berikut untuk ke tiga node tersebut
-
-Gambar 9.1
-
-yang artinya proses deployment web server sudah berhasil dilakukan.
-
 # Soal 10
 
 ## Deskripsi
 
-Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh - Prabakusuma:8001 - Abimanyu:8002 - Wisanggeni:8003
+Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003.
+
+Contoh
+
+- Prabakusuma:8001
+- Abimanyu:8002
+- Wisanggeni:8003
 
 ## Solusi
 
@@ -633,12 +633,9 @@ server {
 ```
 
 kemudian disesuaikan listen sesuai dengan port pada soal, selanjutnya restart nginx dan check apakah sudah berhasil atau belum dengan lynx localhost dan mendapatkan hasil seperti berikut :
-
-gambar 10.1
-
-gambar 10.2
-
-gambar 10.3
+![img1](Image/10.1.png)
+![img1](Image/10.2.png)
+![img1](Image/10.3.png)
 
 # Soal 11
 
@@ -663,9 +660,9 @@ ServerName www.abimanyu.b13.com
 DocumentRoot /var/www/abimanyu.b13
 ```
 
-Setelah selesai kita coba restart apache2 nya dan kita coba testing dengan cara lynx arjuna.b13.com/home.html di server abimanyu tersebut
+Setelah selesai kita coba restart apache2 nya dan kita coba testing dengan cara lynx abimanyu.b13.com/ di server abimanyu tersebut
 
-Gambar 11.1
+![img1](Image/11.1.png)
 
 # Soal 12
 
@@ -687,32 +684,7 @@ Alias "/home" "/var/www/abimanyu.b13/index.php/home"
 
 Setelah itu restart server apache2 dan lakukan ujicoba pada server sadewa, dan tampil hasil sebagai berikut :
 
-Gambar 12.1
-
-# Soal 13
-
-## Deskripsi
-
-Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
-
-## Solusi
-
-Pertama download resource yang diperlukan, kemudian tambahan sebuah syntax berikut pada /etc/apache2/sites-available
-
-```
-<VirtualHost *:80>
-
-    	ServerName parikesit.abimanyu.b13.com
-
-    	ServerAdmin webmaster@localhost
-    	DocumentRoot /var/www/parikesit.abimanyu.b13.com
-    	ServerAlias www.parikesit.abimanyu.b13.com
-
-    	ErrorLog ${APACHE_LOG_DIR}/error.log
-    	CustomLog ${APACHE_LOG_DIR}/access.log combined
-
-</VirtualHost>
-```
+![img1](Image/11.1.png)
 
 # Soal 13
 
@@ -747,7 +719,42 @@ Untuk membuat folder public yang bisa di listing directory dan folder secret yan
 </VirtualHost>
 ```
 
-Gambar 14.1
+v
+
+# Soal 14
+
+## Deskripsi
+
+Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
+
+## Solusi
+
+Untuk membuat folder public yang bisa di listing directory dan folder secret yang forbidden kita menambahkan sebuah syntex di script sebelumnya yaitu
+
+```
+<VirtualHost *:80>
+    	ServerName parikesit.abimanyu.b13.com
+
+    	ServerAdmin webmaster@localhost
+    	DocumentRoot /var/www/parikesit.abimanyu.b13.com
+    	ServerAlias www.parikesit.abimanyu.b13.com
+
+    	# Soal No 14
+    	<Directory /var/www/abimanyu.b13.com/public>
+            	Options +Indexes
+    	</Directory>
+
+    	<Directory /var/www/parikesit.abimanyu.b13.com/secret>
+            	Options -Indexes
+    	</Directory>
+
+    	ErrorLog ${APACHE_LOG_DIR}/parikesit_error.log
+    	CustomLog ${APACHE_LOG_DIR}/parikesit_access.log combined
+
+</VirtualHost>
+```
+
+![img1](Image/14.1.png)
 
 # Soal 15
 
@@ -766,9 +773,9 @@ ErrorDocument 403 /error/403.html
 
 Sehingga apabila kita uji coba maka akan menghasilkan sebagai berikut :
 
-Gambar 15.1
+![img1](Image/14.1.png)
 
-Gambar 15.2
+![img1](Image/15.2.png)
 
 # Soal 16
 

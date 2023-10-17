@@ -73,8 +73,6 @@ Sesuai nama pada topologi menjadi seperti berikut :
 Kemudian Sesuaikan masing-masing IP pada node dengan prefix ip adalah `10.15.xxx.xxx`
 dengan cara setting configuration pada router dengan script sebagai berikut :
 
-<!-- Create Table -->
-
 ![img1](Image/1.4.png)
 
 Kemudian jika berhasil maka sebagai berikut
@@ -91,10 +89,9 @@ Kemudian setting node `Werkudara (eth2 -> eth0)`
 
 Kemudian kita setting bagian pada **eth3** dan kita bagi ip antara sadewa dan nakula menjadi berikut :
 
-```
-Sadewa : 10.15.3.2
-Nakula : 10.15.3.3
-```
+**Sadewa** : `10.15.3.2`
+
+**Nakula** : `10.15.3.3`
 
 Selanjutnya kita buat configuration jaringan nya menjadi berikut :
 
@@ -102,12 +99,13 @@ Selanjutnya kita buat configuration jaringan nya menjadi berikut :
 
 Kemudian kita setting bagian pada **eth4** dan kita bagi ip antara Arjuna-LB, Prabukusuma, Abimanyu, dan Wissanggeni menjadi berikut :
 
-```
-Arjuna-LB 	: 10.15.4.2
-Prabukusuma : 10.15.4.3
-Abimanyu 	: 10.15.4.4
-Wissanggeni : 10.15.4.5
-```
+**Arjuna-LB** : `10.15.4.2`
+
+**Prabukusuma** : `10.15.4.3`
+
+**Abimanyu** : `10.15.4.4`
+
+**Wissanggeni** : `10.15.4.5`
 
 Selanjutnya buat configuration jaringan nya menjadi berikut :
 
@@ -162,7 +160,7 @@ Untuk membuat DNS tersebut pertama-tama kita aktifkan dulu seluruh node dan kita
 
 Setelah `/etc/bind` sudah terbuka di node Yudhistira, langkah selanjutnya membuat sebuah folder yaitu **arjuna.b13** dan kemudian membuat sebuah konfigurasi sebagai berikut :
 
-File : `/etc/bind/arjuna.b13.com`
+File : `/etc/bind/arjuna.b13`
 
 ```
 ;
@@ -170,11 +168,11 @@ File : `/etc/bind/arjuna.b13.com`
 ;
 $TTL	604800
 @   	IN  	SOA 	b13.com. root.b13.com. (
-	2023091001  	; Serial
-	604800     		; Refresh
-	86400     		; Retry
-	2419200     	; Expire
-	604800 )   		; Negative Cache TTL
+                    	2023091001  	; Serial
+                     	604800     	; Refresh
+                      	86400     	; Retry
+                    	2419200     	; Expire
+                     	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	arjuna.b13.com.
 @   	IN  	A   	10.15.4.2   	; IP Arjuna
@@ -202,9 +200,9 @@ dan lakukan test pada DNS tersebut dengan cara ping **arjuna.b13.com** dan didap
 
 ![img1](Image/2.2.png)
 
-Untuk menambahkan alias www.arjuna.b13.com maka kita harus menambahkan alias pada `/etc/bind/arjuna.b13/arjuna.b13` sebagai berikut :
+Untuk menambahkan alias www.arjuna.b13.com maka kita harus menambahkan alias pada `/etc/bind/arjuna.b13/arjuna.b13.com` sebagai berikut :
 
-File : `/etc/bind/arjuna.b13/arjuna.b13`
+File : `/etc/bind/arjuna.b13/arjuna.b13.com`
 
 ```
 ;
@@ -212,11 +210,11 @@ File : `/etc/bind/arjuna.b13/arjuna.b13`
 ;
 $TTL	604800
 @   	IN  	SOA 	b13.com. root.b13.com. (
-	2023091001  ; Serial
-	604800     	; Refresh
-	86400     	; Retry
-	2419200     ; Expire
-	604800 )   	; Negative Cache TTL
+                    	2023091001  	; Serial
+                     	604800     	; Refresh
+                      	86400     	; Retry
+                    	2419200     	; Expire
+                     	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	arjuna.b13.com.
 @   	IN  	A   	10.15.4.2   	; IP Arjuna
@@ -299,11 +297,11 @@ Untuk membuat sebuah subdomain maka yang perlu kita butuhkan adalah menambahkan 
 ;
 $TTL	604800
 @   	IN  	SOA 	b13.com. root.b13.com. (
-	2023091001  ; Serial
-	604800     	; Refresh
-	86400     	; Retry
-	2419200     ; Expire
-	604800 )   	; Negative Cache TTL
+                    	2023091001  	; Serial
+                     	604800     	; Refresh
+                      	86400     	; Retry
+                    	2419200     	; Expire
+                     	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	abimanyu.b13.com.
 @   	IN  	A   	10.15.4.4   	; IP Abimanyu
@@ -318,7 +316,7 @@ Yang apabilah kita test dengan melakukan ping ke parikesit.abimanyu.b13.com yang
 
 ![img1](Image/4.1.png)
 
-Bisa kita lihat ping diatas menghasilkan sebuah respond ip 10.15.4.4 yaitu IP node Abimanyu, yang artinya sambungan tersebut sudah berhasil.
+Bisa kita lihat ping diatas menghasilkan sebuah respond ip ..4.4 yaitu IP node Abimanyu, yang artinya sambungan tersebut sudah berhasil.
 
 # Soal No 5
 
@@ -328,21 +326,43 @@ Buat juga reverse domain untuk domain utama.
 
 ## Solusi
 
-Untuk membuat reverse domain tersebut kita bisa pergi ke file `/etc/bind/named.conf.local` dan menambahkan script sebagai berikut :
+Untuk membuat reverse domain tersebut kita bisa pergi ke file `/etc/bind/named.conf` dan menambahkan script sebagai berikut :
 
 ```
 zone "4.13.10.in-addr.arpa" {
-	type master;
-	file "/etc/bind/4.13.10.in-addr/4.13.10.in-addr.arpa";
+    	type master;
+    	file "/etc/bind/4.13.10.in-addr/4.13.10.in-addr.arpa";
 };
 ```
 
 Save dan kita buat sebuah file sebagai tempat penampungan reverse domain dengan nama folder `4.13.10.in-addr` tambahkan pada file sesuai dengan file diatas yaitu :
 
-![img1](Image/5.1.png)
+`File: /etc/bind/4.13.10.in-addr/4.13.10.in-addr.arpa`
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL	604800
+@   	IN  	SOA 	b13.com. root.b13.com. (
+                    	2023091001  	; Serial
+                     	604800     	; Refresh
+                      	86400     	; Retry
+                    	2419200     	; Expire
+                     	604800 )   	; Negative Cache TTL
+;
+4.13.10.in-addr.arpa.   IN  	NS  	arjuna.b13.com.
+2                   	IN  	PTR 	arjuna.b13.com.    
+4.13.10.in-addr.arpa.   IN  	NS  	abimanyu.b13.com.
+4                   	IN  	PTR 	abimanyu.b13.com.
+```
 
-Kemudian kita bisa restart dan check apakah konfigurasi diatas sudah benar dengan cara tulis command di bawah ini pada node **Sadewa**
+Kemudian kita bisa restart dan check apakah konfigurasi diatas sudah benar dengan cara tulis command di bawah ini pada node **Sadewa**:
+
+`host -t PTR 10.13.4.2`
 ![img1](Image/5.2.png)
+
+`host -t PTR 10.13.4.4`
+![img1](Image/5.3.png)
 
 ## Hasil
 
@@ -374,9 +394,9 @@ zone "abimanyu.b13.com" {
     	file "/etc/bind/abimanyu.b13/abimanyu.b13.com";
 };
 
-zone "4.15.10.in-addr.arpa" {
+zone "4.13.10.in-addr.arpa" {
     	type master;
-    	file "/etc/bind/4.15.10.in-addr/4.15.10.in-addr.arpa";
+    	file "/etc/bind/4.13.10.in-addr/4.13.10.in-addr.arpa";
 };
 ```
 
@@ -429,11 +449,11 @@ Untuk membuat subdomain tersebut kita bisa pergi ke server Yudhistira dan pergi 
 ;
 $TTL     604800
 @   	IN  	SOA 	b13.com. root.b13.com. (
-	2023091001  	; Serial
-	604800     		; Refresh
-	86400     	    ; Retry
-	2419200     	; Expire
-	604800 )   		; Negative Cache TTL
+                    	2023091001  	; Serial
+                     	604800     	; Refresh
+                      86400     	      ; Retry
+                    	2419200     	; Expire
+                     	604800 )   	; Negative Cache TTL
 ;
 @           	IN  	NS  	abimanyu.b13.com.
 @           	IN  	A   	10.15.4.4   	; IP Abimanyu
@@ -480,11 +500,11 @@ Setelah itu kita bisa bikin sebuah folder pada **/etc/bind/** dengan nama folder
 ;
 $TTL	604800
 @   	IN  	SOA 	abimanyu.b13.com. root.abimanyu.b13.com. (
-	2023101001  	; Serial
-	604800     		; Refresh
-	86400     		; Retry
-	2419200     	; Expire
-	604800 )   		; Negative Cache TTL
+                    	2023101001  	; Serial
+                     	604800     	; Refresh
+                      	86400     	; Retry
+                    	2419200     	; Expire
+                     	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	baratayuda.abimanyu.b13.com.
 @   	IN  	A   	10.15.4.4   	; IP Abimanyu
@@ -505,15 +525,15 @@ Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdom
 
 ## Solusi
 
-Untuk menambahkan subdomain itu kita hanya tinggal merubah `/etc/bind/delegasi/baratayuda.abimanyu.b13.com` dan menabhakan subdomainya beserta cnamnya sehingga kurang lebih syntax yang baru akan berbentuk seperti berikut ini :
+Untuk menambahkan subdomain itu kita hanya tinggal merubah /etc/bind/delegasi/baratayuda.abimanyu.b13.com dan menabhakan subdomainya beserta cnamnya sehingga kurang lebih syntax yang baru akan berbentuk seperti berikut ini :
 
 ```
 @   	IN  	SOA 	abimanyu.b13.com. root.abimanyu.b13.com. (
-	2023101001  	; Serial
-	604800     	; Refresh
-	86400     	; Retry
-	2419200     	; Expire
-	604800 )   	; Negative Cache TTL
+                    	2023101001  	; Serial
+                     	604800     	; Refresh
+                      	86400     	; Retry
+                    	2419200     	; Expire
+                     	604800 )   	; Negative Cache TTL
 ;
 @   	IN  	NS  	baratayuda.abimanyu.b13.com.
 @   	IN  	A   	10.15.4.4   	; IP Abimanyu
@@ -556,7 +576,7 @@ lynx localhost
 
 Dan mendapatkan hasil sebagai berikut untuk ke tiga node tersebut
 
-Gambar 9.1
+![img1](Image/9.1.png)
 
 yang artinya proses deployment web server sudah berhasil dilakukan.
 
@@ -634,11 +654,12 @@ server {
 
 kemudian disesuaikan listen sesuai dengan port pada soal, selanjutnya restart nginx dan check apakah sudah berhasil atau belum dengan lynx localhost dan mendapatkan hasil seperti berikut :
 
-gambar 10.1
-
-gambar 10.2
-
-gambar 10.3
+Prabukusuma
+![img1](Image/10.1.png)
+Abimanyu
+![img1](Image/10.2.png)
+Wissanggeni
+![img1](Image/10.3.png)
 
 # Soal 11
 
@@ -665,7 +686,7 @@ DocumentRoot /var/www/abimanyu.b13
 
 Setelah selesai kita coba restart apache2 nya dan kita coba testing dengan cara lynx arjuna.b13.com/home.html di server abimanyu tersebut
 
-Gambar 11.1
+![img1](Image/11.1.png)
 
 # Soal 12
 
@@ -687,7 +708,7 @@ Alias "/home" "/var/www/abimanyu.b13/index.php/home"
 
 Setelah itu restart server apache2 dan lakukan ujicoba pada server sadewa, dan tampil hasil sebagai berikut :
 
-Gambar 12.1
+![img1](Image/12.1.png)
 
 # Soal 13
 
@@ -714,7 +735,7 @@ Pertama download resource yang diperlukan, kemudian tambahan sebuah syntax berik
 </VirtualHost>
 ```
 
-# Soal 13
+# Soal 14
 
 ## Deskripsi
 
@@ -747,7 +768,7 @@ Untuk membuat folder public yang bisa di listing directory dan folder secret yan
 </VirtualHost>
 ```
 
-Gambar 14.1
+![img1](Image/14.1.png)
 
 # Soal 15
 
@@ -766,9 +787,9 @@ ErrorDocument 403 /error/403.html
 
 Sehingga apabila kita uji coba maka akan menghasilkan sebagai berikut :
 
-Gambar 15.1
+![img1](Image/15.1.png)
 
-Gambar 15.2
+![img1](Image/15.2.png)
 
 # Soal 16
 
@@ -788,7 +809,7 @@ Alias "/js" "/var/www/parikesit.abimanyu.b13.com/public/js"
 
 Kemudian kita lakukan test dengan cara lynx parikesit.abimanyu.b13.com/js maka akan mendapatkan hasil sebabgai berikut:
 
-Gambar 16.1
+![img1](Image/16.1.png)
 
 # Soal 17
 
@@ -823,13 +844,13 @@ Listen 14400
 
 Selanjutnya restart apache dan check apakah server abimanyu sudah membuka port 14400 dan 14000 dengan cara netsat -nltp | grep apache
 
-Gambar 17.1
+![img1](Image/17.1.png)
 
 Kemudian kita check di client apakah sudah bisa diakses atau belum:
 
-Gambar 17.2
+![img1](Image/17.2.png)
 
-Gambar 17.3
+![img1](Image/17.3.png)
 
 # Soal 18
 
@@ -855,12 +876,37 @@ sudo htpasswd -c /etc/apache2/.htpasswd Wayang
 
 Kemudian masukan password yaitu baratayudab13
 Kemudian kita tambahkan script di sites-available/rjp.baratayuda dengan
+```
+<VirtualHost *:14000 *:14400 >
+    	ServerName rjp.baratayuda.abimanyu.b13.com
 
-Gambar 18.1
+    	ServerAdmin webmaster@localhost
+    	DocumentRoot /var/www/rjp.baratayuda.abimanyu.b13.com
+    	ServerAlias www.rjp.baratayuda.abimanyu.b13.com
+
+    	<Directory />
+            	Options FollowSymLinks
+            	AllowOverride None
+    	</Directory>
+    	<Directory /var/www/rjp.baratayuda.abimanyu.b13.com>
+AuthType Basic
+            	AuthName "Restricted Content"
+            	AuthUserFile /etc/apache2/.htpasswd
+            	Require valid-user
+    	</Directory>
+
+    	ErrorLog ${APACHE_LOG_DIR}/rjp_error.log
+    	CustomLog ${APACHE_LOG_DIR}/rjp_access.log combined
+
+</VirtualHost>
+
+```
+
+![img1](Image/18.1.png)
 
 kemudian diisikan passwordnya dan usernamenya yaitu : Wayang dan baratayudab13 maka akan keluar tampilan seperti berikut:
 
-Gambar 18.2
+![img1](Image/18.2.png)
 
 # Soal 19
 
@@ -885,6 +931,13 @@ RewriteBase /
 RewriteCond %{HTTP_HOST} ^10\.13\.4\.4$
 RewriteRule ^(.*) http://www.abimanyu.b13.com/$1 [L,R=301]
 ```
+Kemudian tambahakan script berikut ini untuk menjalankan .
+```
+    	<Directory /var/www/abimanyu.b13.com>
+            	Options +FollowSymLinks -Multiviews
+            	AllowOverride All
+    	</Directory>
+```
 
 # Soal 20
 
@@ -900,9 +953,49 @@ Pertama tama pasang .htaccess pada /var/www/parikesit.abimanyu.b13.com kemudian 
 RewriteEngine On
 RewriteBase /
 
+# Check if the request is not already /abimanyu.png
+RewriteCond %{REQUEST_URI} !^/abimanyu.png$ [NC]
+
 # Redirect requests for images containing "abimanyu" to abimanyu.png
 RewriteCond %{REQUEST_URI} abimanyu [NC]
 RewriteRule \.(jpg|jpeg|png|gif)$ http://www.parikesit.abimanyu.b13.com/abimanyu.png [L,R=301]
+
 ```
 
 Kemudian Tambahkan alias dengan cara ubah parikesit.abimanyu.b13.com.conf menjadi
+
+```
+<VirtualHost *:80>
+    	ServerName parikesit.abimanyu.b13.com
+
+    	ErrorDocument 404 /error/404.html
+    	ErrorDocument 403 /error/403.html
+
+    	ServerAdmin webmaster@localhost
+    	DocumentRoot /var/www/parikesit.abimanyu.b13.com
+    	ServerAlias www.parikesit.abimanyu.b13.com
+
+     <Directory /var/www/abimanyu.b13.com/public>
+            	Options +Indexes
+    	</Directory>
+
+    	<Directory /var/www/parikesit.abimanyu.b13.com/secret>
+            	Options -Indexes
+    	</Directory>
+
+    	Alias "/js" "/var/www/parikesit.abimanyu.b13.com/public/js"
+
+     	<Directory /var/www/parikesit.abimanyu.b13.com>
+            	Options +FollowSymLinks -Multiviews
+            	AllowOverride All
+    	</Directory>
+    	Alias "/abimanyu.png" "/var/www/parikesit.abimanyu.b13.com/public/images/abimanyu.png"
+
+    	ErrorLog ${APACHE_LOG_DIR}/parikesit_error.log
+    	CustomLog ${APACHE_LOG_DIR}/parikesit_access.log combined
+</VirtualHost>
+```
+Selanjutnya kita check dengan menggunakan curl -I url/images/abimanyu
+![img1](Image/20.1.png)
+Yey selesai urlnya sudah diarahkan ke abimanyu.png
+
